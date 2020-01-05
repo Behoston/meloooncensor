@@ -25,12 +25,16 @@ public class Configuration {
     public static final String IGNORE = "censor.ignore";
     public static final String MESSAGE = "censor.message";
     public static final String ENABLE_PUNISH = "censor.punish.enable";
-
     public static final String MESSAGE_PUNISH_COMMAND = "censor.punish.message";
     public static final String COMMAND = "censor.punish.command";
     public static final String PLAY_TIME = "censor.punish.playtime";
     public static final String MISTAKES = "censor.punish.mistakes";
-
+    public static final String ENABLE_LONG_TIME_PUNISH = "censor.punish-long-time.enable";
+    public static final String RESET_COUNT_LONG_TIME_PUNISH = "censor.punish-long-time.reset";
+    public static final String MESSAGE_LONG_TIME_PUNISH_COMMAND = "censor.punish-long-time.message";
+    public static final String COMMAND_LONG_TIME = "censor.punish-long-time.command";
+    public static final String LONG_TIME_PLAY_TIME = "censor.punish-long-time.playtime";
+    public static final String LONG_TIME_MISTAKES = "censor.punish-long-time.mistakes";
     public static final boolean DEFAULT_ENABLE = true;
     public static final boolean DEFAULT_BYPASS = false;
     public static final String DEFAULT_LANGUAGE = "en";
@@ -39,15 +43,20 @@ public class Configuration {
     public static final String[] DEFAULT_CENSOR = new String[]{"fuck", "shit", "piss", "bitch"};
     public static final String[] DEFAULT_IGNORE = new String[]{"shitsu"};
     public static final String DEFAULT_MESSAGE = "Please don't use that kind of language on this server, {player}.";
-    public static final boolean DEFAULT_PUNISH_ENABLE = true;
+    public static final boolean DEFAULT_PUNISH_ENABLE = false;
     public static final String DEFAULT_PUNISH_MESSAGE = "Player {player} has been kicked for {mistakes} mistakes.";
     public static final String DEFAULT_PUNISH_COMMAND = "kick {player}";
     public static final Long DEFAULT_PLAY_TIME = 86400L;
     public static final Integer DEFAULT_MISTAKES = 2;
+    public static final boolean DEFAULT_ENABLE_LONG_TIME_PUNISH = true;
+    public static final boolean DEFAULT_RESET_COUNT_LONG_TIME_PUNISH = true;
+    public static final String DEFAULT_MESSAGE_LONG_TIME_PUNISH_COMMAND = "Player {player} has been kicked for {mistakes} mistakes.";
+    public static final String DEFAULT_COMMAND_LONG_TIME = "kick {player}";
+    public static final Long DEFAULT_LONG_TIME_PLAY_TIME = 86400L;
+    public static final Integer DEFAULT_LONG_TIME_MISTAKES = 4;
 
     MelooonCensor plugin;
     Client bugsnag;
-
     Filter filter;
     boolean enabled;
     boolean bypass;
@@ -63,6 +72,12 @@ public class Configuration {
     String command;
     Long play_time;
     Integer mistakes;
+    boolean enabledLongTimePunish;
+    boolean resetCountLongTimePunish;
+    String messageLongTimePermission;
+    String commandLongTime;
+    Long longTimePlayTime;
+    Integer longTimeMistakes;
 
     public Configuration(MelooonCensor plugin, Client bugsnag) {
         this.plugin = plugin;
@@ -84,11 +99,17 @@ public class Configuration {
         getConfig().addDefault(CENSOR, DEFAULT_CENSOR);
         getConfig().addDefault(IGNORE, DEFAULT_IGNORE);
         getConfig().addDefault(MESSAGE, DEFAULT_MESSAGE);
-        getConfig().addDefault(MESSAGE_PUNISH_COMMAND, DEFAULT_PUNISH_MESSAGE);
         getConfig().addDefault(ENABLE_PUNISH, DEFAULT_PUNISH_ENABLE);
+        getConfig().addDefault(MESSAGE_PUNISH_COMMAND, DEFAULT_PUNISH_MESSAGE);
         getConfig().addDefault(COMMAND, DEFAULT_PUNISH_COMMAND);
         getConfig().addDefault(PLAY_TIME, DEFAULT_PLAY_TIME);
         getConfig().addDefault(MISTAKES, DEFAULT_MISTAKES);
+        getConfig().addDefault(ENABLE_LONG_TIME_PUNISH, DEFAULT_ENABLE_LONG_TIME_PUNISH);
+        getConfig().addDefault(RESET_COUNT_LONG_TIME_PUNISH, DEFAULT_RESET_COUNT_LONG_TIME_PUNISH);
+        getConfig().addDefault(MESSAGE_LONG_TIME_PUNISH_COMMAND, DEFAULT_MESSAGE_LONG_TIME_PUNISH_COMMAND);
+        getConfig().addDefault(COMMAND_LONG_TIME, DEFAULT_COMMAND_LONG_TIME);
+        getConfig().addDefault(LONG_TIME_PLAY_TIME, DEFAULT_LONG_TIME_PLAY_TIME);
+        getConfig().addDefault(LONG_TIME_MISTAKES, DEFAULT_LONG_TIME_MISTAKES);
 
         getConfig().options().copyDefaults(true);
         saveConfig();
@@ -109,7 +130,12 @@ public class Configuration {
         setCommand(getConfig().getString(COMMAND));
         setTime(getConfig().getLong(PLAY_TIME));
         setMistakes(getConfig().getInt(MISTAKES));
-
+        setEnabledLongTimePunish(getConfig().getBoolean(ENABLE_LONG_TIME_PUNISH));
+        setResetCountLongTimePunish(getConfig().getBoolean(RESET_COUNT_LONG_TIME_PUNISH));
+        setMessagePermissionLong(getConfig().getString(MESSAGE_LONG_TIME_PUNISH_COMMAND));
+        setCommandLong(getConfig().getString(COMMAND_LONG_TIME));
+        setTimeLong(getConfig().getLong(LONG_TIME_PLAY_TIME));
+        setMistakesLong(getConfig().getInt(LONG_TIME_MISTAKES));
     }
 
     private void saveConfig() {
@@ -130,6 +156,12 @@ public class Configuration {
         getConfig().set(COMMAND, command);
         getConfig().set(PLAY_TIME, play_time);
         getConfig().set(MISTAKES, mistakes);
+        getConfig().set(ENABLE_LONG_TIME_PUNISH, enabledLongTimePunish);
+        getConfig().set(RESET_COUNT_LONG_TIME_PUNISH, resetCountLongTimePunish);
+        getConfig().set(MESSAGE_LONG_TIME_PUNISH_COMMAND, messageLongTimePermission);
+        getConfig().set(COMMAND_LONG_TIME, commandLongTime);
+        getConfig().set(LONG_TIME_PLAY_TIME, longTimePlayTime);
+        getConfig().set(LONG_TIME_MISTAKES, longTimeMistakes);
 
         saveConfig();
     }
@@ -343,20 +375,20 @@ public class Configuration {
         return messagePermission;
     }
 
-    public String getCommand() {
-        return command;
-    }
-
-    public void setCommand(String command) {
-        this.command = command;
-    }
-
     public boolean isEnabledPunish() {
         return enabled_punish;
     }
 
     public void setEnabledPunish(boolean enabled_punish) {
         this.enabled_punish = enabled_punish;
+    }
+
+    public String getCommand() {
+        return command;
+    }
+
+    public void setCommand(String command) {
+        this.command = command;
     }
 
     public String getCommandForPemission(HashMap<String, String> values) {
@@ -388,5 +420,76 @@ public class Configuration {
 
     public void setMistakes(Integer mistakes) {
         this.mistakes = mistakes;
+    }
+
+    public boolean isEnabledLongTimePunish() {
+        return enabledLongTimePunish;
+    }
+
+    public void setEnabledLongTimePunish(boolean enabled_long_time_punish) {
+        this.enabledLongTimePunish = enabled_long_time_punish;
+    }
+
+    public boolean isResetCountLongTimePunish() {
+        return resetCountLongTimePunish;
+    }
+
+    public void setResetCountLongTimePunish(boolean resetCountLongTimePunish) {
+        this.resetCountLongTimePunish = resetCountLongTimePunish;
+    }
+
+    public String getMessagePermissionLong() {
+        return messageLongTimePermission;
+    }
+
+    public void setMessagePermissionLong(String messageLongTimePermission) {
+        this.messageLongTimePermission = messageLongTimePermission;
+    }
+
+    public String getFormattedMessagePermissionLong(String playerName, Integer mistakes) {
+        // Translate the alt color codes first, in case of user input
+        String messagePermission = ChatColor.translateAlternateColorCodes('&', getMessagePermissionLong());
+        messagePermission = messagePermission.replaceAll("\\{player}", playerName);
+        messagePermission = messagePermission.replaceAll("\\{mistakes}", mistakes.toString());
+        return messagePermission;
+    }
+
+    public String getCommandLong() {
+        return commandLongTime;
+    }
+
+    public void setCommandLong(String commandLongTime) {
+        this.commandLongTime = commandLongTime;
+    }
+
+    public String getCommandForPemissionLong(HashMap<String, String> values) {
+        // Translate the alt color codes first, in case of user input
+        String command = ChatColor.translateAlternateColorCodes('&', getCommandLong());
+
+        if (values != null && values.size() > 0) {
+            for (String key : values.keySet()) {
+                // {player} => jacoooooooooooob
+                command = command.replaceAll("\\{" + key + "}", values.get(key));
+
+            }
+        }
+
+        return command;
+    }
+
+    public long getTimeLong() {
+        return longTimePlayTime;
+    }
+
+    public void setTimeLong(long longTimePlayTime) {
+        this.longTimePlayTime = longTimePlayTime;
+    }
+
+    public Integer getMistakesLong() {
+        return longTimeMistakes;
+    }
+
+    public void setMistakesLong(Integer mistakes) {
+        this.longTimeMistakes = mistakes;
     }
 }

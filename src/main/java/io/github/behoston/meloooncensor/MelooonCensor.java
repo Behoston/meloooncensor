@@ -21,7 +21,7 @@ public class MelooonCensor extends JavaPlugin {
     private Client bugsnag;
     private ViolationLogger chatLogger;
     private ViolationLogger signLogger;
-    private static Plugin plugin; // <-- Where you store an instance of your main class
+    private static Plugin plugin;
 
     protected void startBugsnag() {
         bugsnag = new Client("b5347687fe92ee7494d20cdf5a725fad");
