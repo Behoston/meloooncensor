@@ -1,13 +1,12 @@
 package io.github.behoston.meloooncensor;
 
-import com.bugsnag.Client;
+import com.bugsnag.Bugsnag;
 import io.github.behoston.meloooncensor.log.ViolationLogger;
 import io.github.behoston.meloooncensor.config.Configuration;
 import io.github.behoston.meloooncensor.listener.ChatEventListener;
 import io.github.behoston.meloooncensor.command.CensorCommandExecutor;
 import io.github.behoston.meloooncensor.listener.PlayerJoinEventListener;
 import io.github.behoston.meloooncensor.listener.SignChangeEventListener;
-import io.github.behoston.meloooncensor.listener.UnhandledExceptionListener;
 import io.github.behoston.meloooncensor.updater.CheckForUpdatesTask;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -17,15 +16,14 @@ public class MelooonCensor extends JavaPlugin {
 
     private Configuration config;
     private CheckForUpdatesTask updater;
-    private Client bugsnag;
+    private Bugsnag bugsnag;
     private ViolationLogger chatLogger;
     private ViolationLogger signLogger;
 
     protected void startBugsnag () {
-        bugsnag = new Client("b5347687fe92ee7494d20cdf5a725fad");
+        bugsnag = new Bugsnag("fc44da4898af2627b9157e8f512c4254");
         bugsnag.setAppVersion(getDescription().getVersion());
         bugsnag.setProjectPackages("io.github.behoston.meloooncensor");
-        bugsnag.addBeforeNotify(new UnhandledExceptionListener());
     }
 
     protected void createViolationLoggers () {

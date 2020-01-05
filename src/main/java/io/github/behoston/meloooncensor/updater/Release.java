@@ -46,13 +46,10 @@ public class Release {
         Release release = new Release();
         release.version = json.getString("tag_name");
         release.description = json.getString("body");
-        String[] descriptionList = release.description.split("\\n");
-        release.summary = descriptionList[descriptionList.length - 1]; // Use the last line of the description as the summary
-        {
-            JSONArray assets = json.getJSONArray("assets");
-            JSONObject jar = assets.getJSONObject(0);
-            release.downloadUrl = jar.getString("browser_download_url");
-        }
+        release.summary = json.getString("name");
+        JSONArray assets = json.getJSONArray("assets");
+        JSONObject jar = assets.getJSONObject(0);
+        release.downloadUrl = jar.getString("browser_download_url");
         release.releaseUrl = json.getString("html_url");
         release.isPreRelease = json.getBoolean("prerelease");
         return release;

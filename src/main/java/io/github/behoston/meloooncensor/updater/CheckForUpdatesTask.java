@@ -1,6 +1,6 @@
 package io.github.behoston.meloooncensor.updater;
 
-import com.bugsnag.Client;
+import com.bugsnag.Bugsnag;
 import com.github.zafarkhaja.semver.Version;
 import io.github.behoston.meloooncensor.MelooonCensor;
 import org.json.JSONArray;
@@ -15,25 +15,23 @@ public class CheckForUpdatesTask implements Runnable {
 
     public static final String API_URL = "https://api.github.com";
     public static final String API_ACCEPT = "application/vnd.github.v3+json";
-    public static final String REPO = "behoston/meloooncensor";
+    public static final String REPO = "Behoston/meloooncensor";
 
-    private MelooonCensor plugin;
     private Version version;
-    private Client bugsnag;
+    private Bugsnag bugsnag;
 
     private boolean isOutdated;
     private Release latestRelease;
     private boolean isRunningPreRelease;
 
-    public CheckForUpdatesTask (MelooonCensor plugin, Client bugsnag) {
-        this.plugin = plugin;
+    public CheckForUpdatesTask(MelooonCensor plugin, Bugsnag bugsnag) {
         this.bugsnag = bugsnag;
         this.version = Version.valueOf(plugin.getDescription().getVersion());
-        this.isRunningPreRelease = ! this.version.getPreReleaseVersion().isEmpty();
+        this.isRunningPreRelease = !this.version.getPreReleaseVersion().isEmpty();
     }
 
     @Override
-    public void run () {
+    public void run() {
         boolean isOutdated = false;
         Release latestRelease = null;
 
@@ -47,7 +45,7 @@ public class CheckForUpdatesTask implements Runnable {
                     for (int index = 0; index < releases.length(); index++) {
                         Release release = Release.from(releases.getJSONObject(index));
 
-                        if ( ! release.isPreRelease()) {
+                        if (!release.isPreRelease()) {
                             Version releaseVersion = Version.valueOf(release.getVersion());
 
                             if (releaseVersion.compareTo(version) > 0) {
@@ -68,7 +66,7 @@ public class CheckForUpdatesTask implements Runnable {
         }
     }
 
-    private String sendRequest (String api) {
+    private String sendRequest(String api) {
         HttpURLConnection connection = null;
         String response = null;
 
@@ -112,15 +110,15 @@ public class CheckForUpdatesTask implements Runnable {
         return response;
     }
 
-    public boolean isUpdateAvailable () {
+    public boolean isUpdateAvailable() {
         return isOutdated;
     }
 
-    public Release getLatestRelease () {
+    public Release getLatestRelease() {
         return latestRelease;
     }
 
-    public boolean isRunningPreRelease () {
+    public boolean isRunningPreRelease() {
         return isRunningPreRelease;
     }
 

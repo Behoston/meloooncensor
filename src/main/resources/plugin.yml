@@ -3,6 +3,8 @@ main: io.github.behoston.meloooncensor.MelooonCensor
 version: 4.0.0
 api-version: '1.15'
 author: Behoston <mlegiecki@gmail.com>
+description: Plugin that allows you to censor given words on chat
+website: https://github.com/Behoston/meloooncensor
 commands:
   censor:
     description: Add/remove censored/ignored words from chat.
