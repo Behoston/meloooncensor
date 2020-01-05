@@ -1,7 +1,6 @@
-package io.github.behoston.meloooncensor;
+package io.github.behoston.meloooncensor.filter;
 
 import io.github.behoston.meloooncensor.config.Configuration;
-import io.github.behoston.meloooncensor.filter.WordFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
